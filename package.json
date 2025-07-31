@@ -1,0 +1,15 @@
+{
+  "name": "js-data-structures-practice",
+  "version": "1.0.0",
+  "description": "A repository for implementing and practicing common data structures in JavaScript.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "author": "Your Name",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
