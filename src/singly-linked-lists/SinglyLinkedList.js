@@ -85,7 +85,7 @@ class SinglyLinkedList {
     let foundNode = this.get(index);
 
     if (foundNode) {
-      node.val = value;
+      foundNode.val = value;
       return true;
     }
 
