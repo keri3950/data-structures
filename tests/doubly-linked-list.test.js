@@ -1,10 +1,10 @@
-import { SinglyLinkedList } from "../src/singly-linked-lists/SinglyLinkedList.js";
+import { DoublyLinkedList } from "../src/doubly-linked-lists/DoublyLinkedList.js";
 
-describe("SinglyLinkedList", () => {
+describe("DoublyLinkedList", () => {
   let list;
 
   beforeEach(() => {
-    list = new SinglyLinkedList();
+    list = new DoublyLinkedList();
   });
 
   describe("initial state", () => {
@@ -16,7 +16,7 @@ describe("SinglyLinkedList", () => {
   });
 
   describe("push", () => {
-    test("adds items to end and updates tail/length", () => {
+    test("adds to end, sets head/tail, links prev/next, updates length", () => {
       list.push(1);
       expect(list.head.val).toBe(1);
       expect(list.tail.val).toBe(1);
@@ -25,12 +25,13 @@ describe("SinglyLinkedList", () => {
       list.push(2);
       expect(list.head.val).toBe(1);
       expect(list.tail.val).toBe(2);
+      expect(list.head.next.val).toBe(2);
+      expect(list.tail.prev.val).toBe(1);
       expect(list.length).toBe(2);
     });
 
-    test("returns the list instance (chainable)", () => {
-      const ret = list.push(1);
-      expect(ret).toBe(list);
+    test("returns the list (chainable)", () => {
+      expect(list.push(1)).toBe(list);
     });
   });
 
@@ -39,18 +40,19 @@ describe("SinglyLinkedList", () => {
       expect(list.pop()).toBeUndefined();
     });
 
-    test("removes the last item and updates tail/length", () => {
+    test("removes last node, fixes tail links, updates length", () => {
       list.push(1).push(2).push(3);
       const removed = list.pop();
       expect(removed.val).toBe(3);
       expect(list.tail.val).toBe(2);
+      expect(list.tail.next).toBeNull();
       expect(list.length).toBe(2);
     });
 
-    test("resets head/tail when last item removed", () => {
-      list.push(42);
+    test("resets head/tail on last removal", () => {
+      list.push("x");
       const removed = list.pop();
-      expect(removed.val).toBe(42);
+      expect(removed.val).toBe("x");
       expect(list.head).toBeNull();
       expect(list.tail).toBeNull();
       expect(list.length).toBe(0);
@@ -62,18 +64,19 @@ describe("SinglyLinkedList", () => {
       expect(list.shift()).toBeUndefined();
     });
 
-    test("removes the first item and updates head/length", () => {
+    test("removes first node, fixes head links, updates length", () => {
       list.push(1).push(2).push(3);
       const removed = list.shift();
       expect(removed.val).toBe(1);
       expect(list.head.val).toBe(2);
+      expect(list.head.prev).toBeNull();
       expect(list.length).toBe(2);
     });
 
-    test("resets tail when last item removed", () => {
-      list.push("x");
+    test("resets head/tail on last removal", () => {
+      list.push("y");
       const removed = list.shift();
-      expect(removed.val).toBe("x");
+      expect(removed.val).toBe("y");
       expect(list.head).toBeNull();
       expect(list.tail).toBeNull();
       expect(list.length).toBe(0);
@@ -81,37 +84,43 @@ describe("SinglyLinkedList", () => {
   });
 
   describe("unshift", () => {
-    test("adds item to the front and updates head/length", () => {
-      list.unshift(1);
-      expect(list.head.val).toBe(1);
-      expect(list.tail.val).toBe(1);
+    test("adds to front, links prev/next, updates length", () => {
+      list.unshift(2);
+      expect(list.head.val).toBe(2);
+      expect(list.tail.val).toBe(2);
       expect(list.length).toBe(1);
 
-      list.unshift(0);
-      expect(list.head.val).toBe(0);
-      expect(list.tail.val).toBe(1);
+      list.unshift(1);
+      expect(list.head.val).toBe(1);
+      expect(list.head.next.val).toBe(2);
+      expect(list.tail.prev.val).toBe(1);
       expect(list.length).toBe(2);
     });
 
-    test("returns the list instance (chainable)", () => {
-      const ret = list.unshift(1);
-      expect(ret).toBe(list);
+    test("returns the list (chainable)", () => {
+      expect(list.unshift(1)).toBe(list);
     });
   });
 
   describe("get", () => {
-    test("returns null for out-of-bounds indexes", () => {
-      list.push(1).push(2);
+    beforeEach(() => {
+      list.push("a").push("b").push("c").push("d");
+    });
+
+    test("returns null for out-of-bounds", () => {
       expect(list.get(-1)).toBeNull();
-      expect(list.get(2)).toBeNull();
+      expect(list.get(4)).toBeNull();
       expect(list.get(999)).toBeNull();
     });
 
-    test("returns node at given index", () => {
-      list.push("a").push("b").push("c");
+    test("returns correct nodes (forward and backward search paths)", () => {
+      // Near head
       expect(list.get(0).val).toBe("a");
       expect(list.get(1).val).toBe("b");
+
+      // Near tail
       expect(list.get(2).val).toBe("c");
+      expect(list.get(3).val).toBe("d");
     });
   });
 
@@ -121,7 +130,7 @@ describe("SinglyLinkedList", () => {
       expect(list.set(5, 100)).toBe(false);
     });
 
-    test("updates value and returns true", () => {
+    test("updates node value and returns true", () => {
       list.push(1).push(2).push(3);
       const ok = list.set(1, 200);
       expect(ok).toBe(true);
@@ -132,7 +141,7 @@ describe("SinglyLinkedList", () => {
   describe("insert", () => {
     test("returns false for invalid index", () => {
       expect(list.insert(-1, 10)).toBe(false);
-      expect(list.insert(1, 10)).toBe(false); // empty list, only index 0 valid
+      expect(list.insert(1, 10)).toBe(false);
     });
 
     test("inserts at head (index 0)", () => {
@@ -141,6 +150,8 @@ describe("SinglyLinkedList", () => {
       expect(list.head.val).toBe("start");
       expect(list.tail.val).toBe("start");
       expect(list.length).toBe(1);
+      expect(list.head.prev).toBeNull();
+      expect(list.tail.next).toBeNull();
     });
 
     test("inserts at tail (index === length)", () => {
@@ -148,16 +159,29 @@ describe("SinglyLinkedList", () => {
       const ok = list.insert(2, 3);
       expect(ok).toBe(true);
       expect(list.tail.val).toBe(3);
+      expect(list.tail.prev.val).toBe(2);
       expect(list.length).toBe(3);
     });
 
-    test("inserts in the middle", () => {
+    test("inserts in the middle and stitches both directions", () => {
       list.push(1).push(3);
       const ok = list.insert(1, 2);
       expect(ok).toBe(true);
-      expect(list.get(0).val).toBe(1);
-      expect(list.get(1).val).toBe(2);
-      expect(list.get(2).val).toBe(3);
+
+      const n0 = list.get(0);
+      const n1 = list.get(1);
+      const n2 = list.get(2);
+
+      expect(n0.val).toBe(1);
+      expect(n1.val).toBe(2);
+      expect(n2.val).toBe(3);
+
+      expect(n0.next).toBe(n1);
+      expect(n1.next).toBe(n2);
+
+      expect(n1.prev).toBe(n0);
+      expect(n2.prev).toBe(n1);
+
       expect(list.length).toBe(3);
     });
   });
@@ -170,63 +194,39 @@ describe("SinglyLinkedList", () => {
       expect(list.remove(1)).toBeUndefined();
     });
 
-    test("removes head (index 0)", () => {
-      list.push("a").push("b").push("c");
+    test("removes head and fixes links", () => {
+      list.push("a").push("b").push("c"); // [a,b,c]
       const removed = list.remove(0);
       expect(removed.val).toBe("a");
       expect(list.head.val).toBe("b");
+      expect(list.head.prev).toBeNull();
       expect(list.length).toBe(2);
     });
 
-    test("removes tail (index length-1)", () => {
-      list.push(1).push(2).push(3);
+    test("removes tail and fixes links", () => {
+      list.push(1).push(2).push(3); // [1,2,3]
       const removed = list.remove(2);
       expect(removed.val).toBe(3);
       expect(list.tail.val).toBe(2);
+      expect(list.tail.next).toBeNull();
       expect(list.length).toBe(2);
     });
 
-    test("removes from the middle", () => {
+    test("removes from middle and stitches both directions", () => {
       list.push(1).push(2).push(3).push(4);
       const removed = list.remove(2);
       expect(removed.val).toBe(3);
-      expect(list.get(0).val).toBe(1);
-      expect(list.get(1).val).toBe(2);
-      expect(list.get(2).val).toBe(4);
+
+      const n1 = list.get(1);
+      const n2 = list.get(2);
+
+      expect(n1.val).toBe(2);
+      expect(n2.val).toBe(4);
+      expect(n1.next).toBe(n2);
+      expect(n2.prev).toBe(n1);
+      expect(removed.next).toBeNull();
+      expect(removed.prev).toBeNull();
       expect(list.length).toBe(3);
-    });
-  });
-
-  describe("reverse", () => {
-    test("handles empty list", () => {
-      const ret = list.reverse();
-      expect(ret).toBe(list);
-      expect(list.head).toBeNull();
-      expect(list.tail).toBeNull();
-      expect(list.length).toBe(0);
-    });
-
-    test("handles single element", () => {
-      list.push(42);
-      list.reverse();
-      expect(list.head.val).toBe(42);
-      expect(list.tail.val).toBe(42);
-      expect(list.head).toBe(list.tail);
-      expect(list.length).toBe(1);
-    });
-
-    test("reverses multiple elements (and keeps correct head/tail)", () => {
-      list.push(1).push(2).push(3).push(4);
-      list.reverse();
-
-      expect(list.head.val).toBe(4);
-      expect(list.tail.val).toBe(1);
-
-      expect(list.get(0).val).toBe(4);
-      expect(list.get(1).val).toBe(3);
-      expect(list.get(2).val).toBe(2);
-      expect(list.get(3).val).toBe(1);
-      expect(list.length).toBe(4);
     });
   });
 });

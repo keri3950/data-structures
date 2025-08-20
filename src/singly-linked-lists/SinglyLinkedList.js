@@ -130,9 +130,6 @@ class SinglyLinkedList {
     this.head = this.tail;
     this.tail = node;
 
-    this.tail = head;
-    this.head = tail;
-
     let prev = null;
     let next;
 
@@ -147,3 +144,5 @@ class SinglyLinkedList {
     return this;
   }
 }
+
+export { SinglyLinkedList, Node };
