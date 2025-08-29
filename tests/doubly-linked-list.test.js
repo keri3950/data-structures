@@ -229,4 +229,49 @@ describe("DoublyLinkedList", () => {
       expect(list.length).toBe(3);
     });
   });
+
+  describe("reverse", () => {
+    test("does nothing on an empty list", () => {
+      list.reverse();
+      expect(list.head).toBeNull();
+      expect(list.tail).toBeNull();
+      expect(list.length).toBe(0);
+    });
+
+    test("does nothing on a single-item list", () => {
+      list.push("one");
+      list.reverse();
+      expect(list.head.val).toBe("one");
+      expect(list.tail.val).toBe("one");
+      expect(list.head.next).toBeNull();
+      expect(list.head.prev).toBeNull();
+      expect(list.length).toBe(1);
+    });
+
+    test("reverses a multi-item list and updates all links", () => {
+      list.push(10).push(20).push(30);
+
+      const returnedList = list.reverse();
+      expect(returnedList).toBe(list);
+
+      expect(list.head.val).toBe(30);
+      expect(list.tail.val).toBe(10);
+      expect(list.length).toBe(3);
+
+      const n0 = list.get(0);
+      expect(n0.val).toBe(30);
+      expect(n0.prev).toBeNull();
+      expect(n0.next.val).toBe(20);
+
+      const n1 = list.get(1);
+      expect(n1.val).toBe(20);
+      expect(n1.prev.val).toBe(30);
+      expect(n1.next.val).toBe(10);
+
+      const n2 = list.get(2);
+      expect(n2.val).toBe(10);
+      expect(n2.prev.val).toBe(20);
+      expect(n2.next).toBeNull();
+    });
+  });
 });
