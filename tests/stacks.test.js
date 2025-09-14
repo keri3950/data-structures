@@ -1,4 +1,4 @@
-import { Stack } from "../src/stacks/stacks";
+import { Stack } from "../src/stacks-queues/stacks";
 
 describe("Stack", () => {
   let stack;
