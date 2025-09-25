@@ -124,4 +124,121 @@ describe("BinarySearchTree", () => {
       });
     });
   });
+
+  describe("bfs (Breadth-First Search)", () => {
+    test("should return an empty array for an empty tree", () => {
+      expect(tree.bfs()).toEqual([]);
+    });
+
+    test("should return an array with only the root value for a single-node tree", () => {
+      tree.insert(42);
+      expect(tree.bfs()).toEqual([42]);
+    });
+
+    describe("with a populated tree", () => {
+      beforeEach(() => {
+        tree.insert(10).insert(6).insert(15).insert(3).insert(8).insert(20);
+      });
+
+      test("should return an array of values in breadth-first order", () => {
+        const expectedOrder = [10, 6, 15, 3, 8, 20];
+        expect(tree.bfs()).toEqual(expectedOrder);
+      });
+
+      test("should handle a tree that is not perfectly balanced", () => {
+        tree.insert(17);
+        const expectedOrder = [10, 6, 15, 3, 8, 20, 17];
+        expect(tree.bfs()).toEqual(expectedOrder);
+      });
+    });
+  });
+
+  describe("dfsPreOrder (Depth-First Search)", () => {
+    test("should return an empty array for an empty tree", () => {
+      expect(tree.dfsPreOrder()).toEqual([]);
+    });
+
+    test("should return an array with only the root value for a single-node tree", () => {
+      tree.insert(42);
+      expect(tree.dfsPreOrder()).toEqual([42]);
+    });
+
+    describe("with a populated tree", () => {
+      beforeEach(() => {
+        tree.insert(10).insert(6).insert(15).insert(3).insert(8).insert(20);
+      });
+
+      test("should return an array of values in pre-order (Root, Left, Right)", () => {
+        const expectedOrder = [10, 6, 3, 8, 15, 20];
+        expect(tree.dfsPreOrder()).toEqual(expectedOrder);
+      });
+    });
+
+    test("should handle a right-skewed tree correctly", () => {
+      tree.insert(10).insert(15).insert(20).insert(25);
+      const expectedOrder = [10, 15, 20, 25];
+      expect(tree.dfsPreOrder()).toEqual(expectedOrder);
+    });
+  });
+
+  describe("dfsPostOrder (Depth-First Search)", () => {
+    test("should return an empty array for an empty tree", () => {
+      expect(tree.dfsPostOrder()).toEqual([]);
+    });
+
+    test("should return an array with only the root value for a single-node tree", () => {
+      tree.insert(42);
+      expect(tree.dfsPostOrder()).toEqual([42]);
+    });
+
+    describe("with a populated tree", () => {
+      beforeEach(() => {
+        tree.insert(10).insert(6).insert(15).insert(3).insert(8).insert(20);
+      });
+
+      test("should return an array of values in post-order (Left, Right, Root)", () => {
+        const expectedOrder = [3, 8, 6, 20, 15, 10];
+        expect(tree.dfsPostOrder()).toEqual(expectedOrder);
+      });
+    });
+
+    test("should handle a left-skewed tree correctly", () => {
+      tree.insert(10).insert(6).insert(3);
+      const expectedOrder = [3, 6, 10];
+      expect(tree.dfsPostOrder()).toEqual(expectedOrder);
+    });
+  });
+
+  describe("dfsInOrder (Depth-First Search)", () => {
+    test("should return an empty array for an empty tree", () => {
+      expect(tree.dfsInOrder()).toEqual([]);
+    });
+
+    test("should return an array with only the root value for a single-node tree", () => {
+      tree.insert(42);
+      expect(tree.dfsInOrder()).toEqual([42]);
+    });
+
+    describe("with a populated tree", () => {
+      beforeEach(() => {
+        tree.insert(10).insert(6).insert(15).insert(3).insert(8).insert(20);
+      });
+
+      test("should return an array of values in sorted (in-order) order", () => {
+        const expectedOrder = [3, 6, 8, 10, 15, 20];
+        expect(tree.dfsInOrder()).toEqual(expectedOrder);
+      });
+    });
+
+    test("should return sorted values for an unbalanced tree", () => {
+      tree.insert(10).insert(20).insert(30).insert(40);
+      const expectedOrder = [10, 20, 30, 40];
+      expect(tree.dfsInOrder()).toEqual(expectedOrder);
+
+      const leftSkewedTree = new BinarySearchTree();
+      leftSkewedTree.insert(40).insert(30).insert(20).insert(10);
+      const expectedLeftOrder = [10, 20, 30, 40];
+      expect(leftSkewedTree.dfsInOrder()).toEqual(expectedLeftOrder);
+    });
+  });
 });

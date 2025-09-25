@@ -82,6 +82,87 @@ class BinarySearchTree {
 
     return false;
   }
+
+  bfs() {
+    let node = this.root,
+      result = [],
+      queue = [];
+
+    if (!this.root) {
+      return result;
+    }
+
+    queue.push(node);
+
+    while (queue.length > 0) {
+      node = queue.shift();
+      result.push(node.value);
+
+      if (node.left) {
+        queue.push(node.left);
+      }
+
+      if (node.right) {
+        queue.push(node.right);
+      }
+    }
+
+    return result;
+  }
+
+  dfsPreOrder() {
+    let result = [];
+
+    function traverse(node) {
+      if (node === null) {
+        return;
+      }
+
+      result.push(node.value);
+      traverse(node.left);
+      traverse(node.right);
+    }
+
+    traverse(this.root);
+
+    return result;
+  }
+
+  dfsPostOrder() {
+    let result = [];
+
+    function traverse(node) {
+      if (node === null) {
+        return;
+      }
+
+      traverse(node.left);
+      traverse(node.right);
+      result.push(node.value);
+    }
+
+    traverse(this.root);
+
+    return result;
+  }
+
+  dfsInOrder() {
+    let result = [];
+
+    function traverse(node) {
+      if (node === null) {
+        return;
+      }
+
+      traverse(node.left);
+      result.push(node.value);
+      traverse(node.right);
+    }
+
+    traverse(this.root);
+
+    return result;
+  }
 }
 
 export { Node, BinarySearchTree };
